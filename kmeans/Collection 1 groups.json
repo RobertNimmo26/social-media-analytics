@@ -1,0 +1,130 @@
+{
+  "cluster_size": { "3": 113, "0": 671, "2": 22, "4": 115, "1": 39 },
+  "groups_formed": 5,
+  "max_size": 671,
+  "min_size": 22,
+  "mean_avg_size": 192,
+  "median_avg_size": 113,
+  "cluster": {
+    "cluster_0": {
+      "top_20_terms": [
+        "...",
+        "new",
+        "york",
+        "get",
+        "like",
+        "one",
+        "people",
+        "time",
+        "minister",
+        "day",
+        "see",
+        "year",
+        "tory",
+        "prime",
+        "good",
+        "scotland",
+        "covid",
+        "great",
+        "london",
+        "week"
+      ]
+    },
+    "cluster_1": {
+      "top_20_terms": [
+        "broke",
+        "ppe",
+        "law",
+        "contract",
+        "court",
+        "multimillion",
+        "awarding",
+        "pound",
+        "judge",
+        "fact",
+        "lead",
+        "ruled",
+        "health",
+        "secretary",
+        "online",
+        "explain",
+        "story",
+        "anyone",
+        "high",
+        "disclose"
+      ]
+    },
+    "cluster_2": {
+      "top_20_terms": [
+        "fall",
+        "u",
+        "vol",
+        "1",
+        "includes",
+        "reverse",
+        "bleach",
+        "tite",
+        "burn",
+        "expansion",
+        "western",
+        "witch",
+        "slipcase",
+        "exciting",
+        "kubo",
+        "society",
+        "soul",
+        "branch",
+        "announcement",
+        "release"
+      ]
+    },
+    "cluster_3": {
+      "top_20_terms": [
+        "rt",
+        "uk",
+        "new",
+        "york",
+        "man",
+        "happy",
+        "london",
+        "england",
+        "first",
+        "time",
+        "union",
+        "explain",
+        "prime",
+        "minister",
+        "\u2026",
+        "...",
+        "get",
+        "would",
+        "think",
+        "covid"
+      ]
+    },
+    "cluster_4": {
+      "top_20_terms": [
+        "uk",
+        "2021",
+        "rt",
+        "please",
+        "nz",
+        "like",
+        "follow",
+        "u",
+        "silver",
+        "work",
+        "album",
+        "certified",
+        "never",
+        "walk",
+        "alone",
+        "government",
+        "share",
+        "time",
+        "week",
+        "..."
+      ]
+    }
+  }
+}
