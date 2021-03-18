@@ -19,7 +19,7 @@ ACCESS_TOKEN_SECRET = config("ACCESS_TOKEN_SECRET")
 DOWNLOAD = False
 
 # Runtime
-RUNTIME = 30  # 60 * 1
+RUNTIME = 60 * 1
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
@@ -83,11 +83,12 @@ class StreamListener(tweepy.StreamListener):
                 stats["no_videos"] += tweet["no_videos"]
             if tweet["verified"]:
                 stats["no_verified"] += 1
-            if tweet["geoenabled"]:
-                stats["no_geotagged"] += 1
+            # if tweet["geoenabled"]:
+
             if tweet["coordinates"] is not None:
                 stats["no_coordinates"] += 1
             if tweet["place"] != False:
+                stats["no_geotagged"] += 1
                 stats["no_location_place"] += 1
 
             collection.insert_one(tweet)
@@ -101,11 +102,11 @@ if __name__ == '__main__':
 
     Loc_UK = [-10.392627, 49.681847, 1.055039, 61.122019]  # UK and Ireland
     Words_UK = ["Boris", "Prime Minister", "Tories", "UK", "London", "England", "Manchester", "Sheffield", "York", "Southampton",
-                "Wales", "Cardiff", "Swansea", "Banff", "Bristol", "Oxford", "Birmingham", "Scotland", "Glasgow", "Edinburgh", "Dundee", "Aberdeen", "Highlands"
-                "Inverness", "Perth", "St Andrews", "Dumfries", "Ayr"
-                "Ireland", "Dublin", "Cork", "Limerick", "Galway", "Belfast", " Derry", "Armagh"
-                "BoJo", "Labour", "Liberal Democrats", "SNP", "Conservatives", "First Minister", "Nicola Sturgeon", "Surgeon", "Chancelor"
-                "Boris Johnson", "Keith Stramer"]
+                "Wales", "Cardiff", "Swansea", "Banff", "Bristol", "Oxford", "Birmingham", "Scotland", "Glasgow", "Edinburgh", "Dundee", "Aberdeen", "Highlands",
+                "Inverness", "Perth", "St Andrews", "Dumfries", "Ayr",
+                "Ireland", "Dublin", "Cork", "Limerick", "Galway", "Belfast", " Derry", "Armagh",
+                "BoJo", "Labour", "Liberal Democrats", "SNP", "Conservatives", "First Minister", "Nicola Sturgeon", "Surgeon", "Chancelor",
+                "Boris Johnson", "Keir Stramer"]
 
     print(f"Tracking: {str(Words_UK)}")
 

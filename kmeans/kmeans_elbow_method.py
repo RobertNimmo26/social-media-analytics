@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from yellowbrick.cluster import KElbowVisualizer, SilhouetteVisualizer
 
 
-JSON_INPUT = "StreamedTweets.json"
+JSON_INPUT = "streamer.json"
 
 
 def tokenised_data(doc):

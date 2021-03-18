@@ -134,29 +134,29 @@ def tweet_processor_streamer(tweet):
     if(exactcoord):
         coordinates = exactcoord['coordinates']
 
-    geoenabled = tweet['user']['geo_enabled']
+    #geoenabled = tweet['user']['geo_enabled']
     location = tweet['user']['location']
     # The user is verified
     verified = tweet["user"]['verified']
 
-    if ((geoenabled) and (text.startswith('RT') == False)):
-        try:
-            if(tweet['place']):
-                place = True
-                place_name = tweet['place']['full_name']
-                place_country = tweet['place']['country']
-                place_countrycode = tweet['place']['country_code']
-                place_coordinates = tweet['place']['bounding_box']['coordinates']
-        except Exception as e:
-            print(e)
-            print('error from place details')
+    # if ((geoenabled) and (text.startswith('RT') == False)):
+    try:
+        if(tweet['place']):
+            place = True
+            place_name = tweet['place']['full_name']
+            place_country = tweet['place']['country']
+            place_countrycode = tweet['place']['country_code']
+            place_coordinates = tweet['place']['bounding_box']['coordinates']
+    except Exception as e:
+        print(e)
+        print('error from place details')
 
     quote = (tweet["is_quote_status"])
 
     preprocessed_text = tweets_text_processor(text)
 
     tweet = {'_id': tweet_id, 'date': created, 'username': username,  'text': text, 'processed_text': preprocessed_text, "quote": quote, 'RT': rt, 'verified': verified,
-             'geoenabled': geoenabled,
+             # 'geoenabled': geoenabled,
              'location': location,
              'coordinates': coordinates,
              'place': place,
@@ -251,29 +251,29 @@ def tweet_processor_rest(tweet):
     if(exactcoord):
         coordinates = exactcoord["coordinates"]
 
-    geoenabled = tweet.user.geo_enabled
+    #geoenabled = tweet.user.geo_enabled
     location = tweet.user.location
     # The user is verified
     verified = tweet.user.verified
 
-    if ((geoenabled) and (text.startswith('RT') == False)):
-        try:
-            if(tweet.place):
-                place = True
-                place_name = tweet.place.full_name
-                place_country = tweet.place.country
-                place_countrycode = tweet.place.country_code
-                place_coordinates = tweet.place.bounding_box.coordinates
-        except Exception as e:
-            print(e)
-            print('error from place details')
+    # if (text.startswith('RT') == False):
+    try:
+        if(tweet.place):
+            place = True
+            place_name = tweet.place.full_name
+            place_country = tweet.place.country
+            place_countrycode = tweet.place.country_code
+            place_coordinates = tweet.place.bounding_box.coordinates
+    except Exception as e:
+        print(e)
+        print('error from place details')
 
     quote = (tweet.is_quote_status)
 
     preprocessed_text = tweets_text_processor(text)
 
     tweet = {'_id': tweet_id, 'date': created, 'username': username,  'text': text, 'processed_text': preprocessed_text, "quote": quote, 'RT': rt, 'verified': verified,
-             'geoenabled': geoenabled,
+             # 'geoenabled': geoenabled,
              'location': location,
              'coordinates': coordinates,
              'place': place,

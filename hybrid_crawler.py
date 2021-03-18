@@ -20,7 +20,7 @@ ACCESS_TOKEN_SECRET = config("ACCESS_TOKEN_SECRET")
 DOWNLOAD = False
 
 # Runtime
-RUNTIME = time.time() + 60 * 1
+RUNTIME = time.time() + 30  # 60 * 15
 # 60  # 60 * 18
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -53,8 +53,14 @@ stats = {
     "no_video": 0,
     "no_verified": 0,
     "no_geotagged": 0,
+    "rest_no_geotagged": 0,
+    "streamer_no_geotagged": 0,
     "no_coordinates": 0,
-    "no_location_place": 0
+    "rest_no_coordinates": 0,
+    "streamer_no_coordinates": 0,
+    "no_location_place": 0,
+    "rest_no_location_place": 0,
+    "streamer_no_location_place": 0
 }
 
 
@@ -82,16 +88,24 @@ async def rest_process_tweets(data):
         stats["no_videos"] += tweet["no_videos"]
     if tweet["verified"]:
         stats["no_verified"] += 1
-    if tweet["geoenabled"]:
-        stats["no_geotagged"] += 1
     if tweet["coordinates"] is not None:
         stats["no_coordinates"] += 1
+        stats["rest_no_coordinates"] += 1
     if tweet["place"] != False:
+        stats["no_geotagged"] += 1
+        stats["rest_no_geotagged"] += 1
         stats["no_location_place"] += 1
+        stats["rest_no_location_place"] += 1
 
     if DOWNLOAD:
         if tweet["media_urls"]:
             downloader(tweet["media_urls"])
+
+
+def merge_two_dicts(x, y):
+    z = x.copy()
+    z.update(y)
+    return z
 
 
 class StreamListener(tweepy.StreamListener):
@@ -131,12 +145,14 @@ class StreamListener(tweepy.StreamListener):
                 stats["no_videos"] += tweet["no_videos"]
             if tweet["verified"]:
                 stats["no_verified"] += 1
-            if tweet["geoenabled"]:
-                stats["no_geotagged"] += 1
             if tweet["coordinates"] is not None:
                 stats["no_coordinates"] += 1
+                stats["streamer_no_coordinates"] += 1
             if tweet["place"] != False:
+                stats["no_geotagged"] += 1
+                stats["streamer_no_geotagged"] += 1
                 stats["no_location_place"] += 1
+                stats["streamer_no_location_place"] += 1
 
             if DOWNLOAD:
                 if tweet["media_urls"]:
@@ -147,10 +163,10 @@ if __name__ == '__main__':
 
     Loc_UK = [-10.392627, 49.681847, 1.055039, 61.122019]  # UK and Ireland
     Words_UK = ["Boris", "Prime Minister", "Tories", "UK", "London", "England", "Manchester", "Sheffield", "York", "Southampton",
-                "Wales", "Cardiff", "Swansea", "Banff", "Bristol", "Oxford", "Birmingham", "Scotland", "Glasgow", "Edinburgh", "Dundee", "Aberdeen", "Highlands"
-                "Inverness", "Perth", "St Andrews", "Dumfries", "Ayr"
-                "Ireland", "Dublin", "Cork", "Limerick", "Galway", "Belfast", " Derry", "Armagh"
-                "BoJo", "Labour", "Liberal Democrats", "SNP", "Conservatives", "First Minister", "Nicola Sturgeon", "Surgeon", "Chancelor"
+                "Wales", "Cardiff", "Swansea", "Banff", "Bristol", "Oxford", "Birmingham", "Scotland", "Glasgow", "Edinburgh", "Dundee", "Aberdeen", "Highlands",
+                "Inverness", "Perth", "St Andrews", "Dumfries", "Ayr",
+                "Ireland", "Dublin", "Cork", "Limerick", "Galway", "Belfast", " Derry", "Armagh",
+                "BoJo", "Labour", "Liberal Democrats", "SNP", "Conservatives", "First Minister", "Nicola Sturgeon", "Surgeon", "Chancelor",
                 "Boris Johnson", "Keir Stramer"]
 
     print(f"Tracking: {str(Words_UK)}")
@@ -162,11 +178,6 @@ if __name__ == '__main__':
     streamer.filter(locations=Loc_UK, track=Words_UK,
                     languages=['en'], is_async=True)
 
-    # Place = 'London'
-    # Lat = '51.450798'
-    # Long = '-0.137842'
-    # geoTerm = Lat+','+Long+','+'10km'
-
     last_id = None
     counter = 0
     sinceID = None
@@ -176,10 +187,6 @@ if __name__ == '__main__':
     query = ("edinburgh OR glasgow OR UK OR uk OR Boris OR Johnson OR EU")
 
     while time.time() < RUNTIME:
-        # print(geoTerm)
-
-        # if counter < RUNTIME:
-        # print(counter)
         try:
             tweets = api.search(q=query, count=100, lang="en", include_entities=True,
                                 tweet_mode='extended', max_id=last_id)  # , since_id = sinceID)
@@ -187,16 +194,18 @@ if __name__ == '__main__':
                 asyncio.run(rest_process_tweets(tweet))
         except Exception as e:
             print(e)
-        #counter += 1
-        # else:
-        #    results = False
-        #  the following let the crawler to sleep for 15 minutes; to meet the Tiwtter 15 minute restriction
-        # time.sleep(15*60)
 
     # Disconnect from streamer
     streamer.disconnect()
     print("You have been disconnected from twitter streamer API")
 
+    streamer_ids = collection_streamer.distinct('_id')
+    rest_ids = collection_rest.distinct('_id')
+    streamer_ids.extend(rest_ids)
+
+    no_redundant_data = len(streamer_ids) - len(set(streamer_ids))
+    redundant_data = {"redundant_tweets": no_redundant_data}
+
     with open('hybrid_stats.json', 'w') as json_file:
         json_file.truncate(0)
-        json.dump(stats, json_file)
+        json.dump(merge_two_dicts(stats, redundant_data), json_file)
