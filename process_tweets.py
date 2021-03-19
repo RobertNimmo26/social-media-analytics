@@ -8,17 +8,23 @@ from nltk.tokenize import TweetTokenizer
 
 
 def lemmatize_tweets(array):
+    """lemmatize the text"""
+
     wordnet_stemmer = WordNetLemmatizer()
     return [wordnet_stemmer.lemmatize(word) for word in array]
 
 
 def remove_emoji(text):
+    """Remove emoji's from tweet body"""
+
     removed_emoji_text = re.sub(emoji.get_emoji_regexp(), r"", text)
     removed_emoji_text.encode("ascii", errors="ignore").decode()
     return removed_emoji_text
 
 
 def tokenize_string(text):
+    """Tokenize the tweet body"""
+
     # Keeps converts text to lower case, keeps mentions/handles, reduces length of long words
     tokenizer = TweetTokenizer(
         preserve_case=False, strip_handles=False, reduce_len=True)
@@ -27,12 +33,16 @@ def tokenize_string(text):
 
 
 def remove_punct_stopwords(array):
+    """Remove punctuation and stopwords from tweet body"""
+
     stopwords_english = stopwords.words('english')
     punctuation = string.punctuation
     return [word for word in array if (word not in ('...', '…', '‘', '’', '“', '”') and word not in stopwords_english and word not in punctuation)]
 
 
 def tweets_text_processor(text):
+    """Process the tweet body"""
+
     text = remove_emoji(text)
 
     # Removes any URL's from tweets
@@ -51,9 +61,8 @@ def tweets_text_processor(text):
 
 
 def tweet_processor_streamer(tweet):
-    """
-    Gets processed data from Tweet object
-    """
+    """Gets processed data from Tweet streamer JSON input and returns cleaned dictionary"""
+
     place = False
     place_countrycode = None
     place_name = None
@@ -168,9 +177,8 @@ def tweet_processor_streamer(tweet):
 
 
 def tweet_processor_rest(tweet):
-    """
-    Gets processed data from Tweet object
-    """
+    """Gets processed data from Tweet rest object and returns cleaned dictionary"""
+
     place = False
     place_countrycode = None
     place_name = None

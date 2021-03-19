@@ -4,6 +4,8 @@ from process_tweets import tweets_text_processor
 
 
 def newsworthiness_tweet(tweet, type):
+    """Calculates  the newsworthiness of each tweet"""
+
     quality_score = 0
     list_terms = ['news', 'report', 'journal', 'write', 'editor', 'analyst', 'analysis', 'media', 'updates', 'stories', 'trader',
                   'investor', 'forex', 'stock', 'finance', 'market', "journalist", "reporter", "bbc", "expert", "column", "alumni", "proffessor"]

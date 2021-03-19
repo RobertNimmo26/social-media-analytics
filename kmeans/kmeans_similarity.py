@@ -17,7 +17,7 @@ def tokenised_data(doc):
 
 
 def record_stats(km_model):
-    """Records cluster stats and writes them into json file"""
+    """Records cluster stats and writes them into a JSON file"""
     stats = {}
     km_model_labels = km_model.labels_.tolist()
     cluster_size = Counter(km_model_labels)
@@ -44,14 +44,13 @@ def record_stats(km_model):
     terms = vectorizer.get_feature_names()
     for i in range(NUMBER_OF_CLUSTERS):
         cluster_stats = {}
-        cluster_stats['top_20_terms'] = [terms[index]
-                                         for index in clusterCenters[i, :20]]
+        cluster_stats['top_30_terms'] = [terms[index]
+                                         for index in clusterCenters[i, :30]]
 
         stats['cluster'][f'cluster_{i}'] = cluster_stats
 
     json_output = JSON_INPUT.split(".")[0]
 
-    print(clustering)
     with open(f'{json_output} groups.json', 'w') as json_file:
         json_file.truncate(0)
         json.dump(stats, json_file)
@@ -63,23 +62,26 @@ if __name__ == '__main__':
 
     print(len(tweets_df))
 
-    # Vectorialising the strings, bag of words
+    # Vectorialising the strings
     vectorizer = TfidfVectorizer(
         max_features=2500,  # Only use the int(max_features) most popular words
         min_df=7,  # Words must occur in int(min_df) documents
         # Words that occur in at most int(max_df)*100 % of documents
         max_df=0.8,
-        tokenizer=tokenised_data,
+        tokenizer=tokenised_data,  # Tokenizer for tweets
         preprocessor=tokenised_data,
         token_pattern=None
     )
 
+    # Fit the vectorizer to the tweets "processed_text"
     vectorizer.fit(tweets_df["processed_text"])
 
+    # Transform the vectorizer to the tweets "processed_text"
     tf_idfVectors = vectorizer.transform(tweets_df["processed_text"]).toarray()
 
-    # Fit KMeans
+    # Fit KMeans to the vectorizer
     km_model = KMeans(n_clusters=NUMBER_OF_CLUSTERS, init="k-means++",
                       verbose=10, max_iter=5).fit(tf_idfVectors)
 
+    # Record the stats
     record_stats(km_model)
