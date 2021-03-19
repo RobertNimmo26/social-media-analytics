@@ -34,7 +34,7 @@ The objective of this coursework is to develop a Twitter crawler for data collec
       >>> exit()
       ```
 6. This project uses the Twitter API. You will be required to have a Twitter developer account to run the crawlers.
-   - You can add your account API keys to the .env file inside the quotation marks in the main folder. It should look like this:
+   - You can add your account API keys to a `.env` file created in the main folder. The contents should look like this:
    ```
    CONSUMER_KEY="<EXAMPLE_CONSUMER_KEY>"
    CONSUMER_SECRET="<EXAMPLE_CONSUMER_SECRET>"
