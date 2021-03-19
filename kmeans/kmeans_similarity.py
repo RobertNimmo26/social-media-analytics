@@ -51,6 +51,7 @@ def record_stats(km_model):
 
     json_output = JSON_INPUT.split(".")[0]
 
+    print(clustering)
     with open(f'{json_output} groups.json', 'w') as json_file:
         json_file.truncate(0)
         json.dump(stats, json_file)

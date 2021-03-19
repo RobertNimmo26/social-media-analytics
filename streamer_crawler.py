@@ -18,7 +18,7 @@ ACCESS_TOKEN_SECRET = config("ACCESS_TOKEN_SECRET")
 # Download media objects
 DOWNLOAD = False
 
-# Runtime
+# Runtime in seconds
 RUNTIME = 60 * 1
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)

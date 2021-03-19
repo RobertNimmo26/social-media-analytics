@@ -19,7 +19,7 @@ ACCESS_TOKEN_SECRET = config("ACCESS_TOKEN_SECRET")
 # Download media objects
 DOWNLOAD = False
 
-# Runtime
+# Runtime current time + <RUNTIME VALUE>
 RUNTIME = time.time() + 30  # 60 * 15
 # 60  # 60 * 18
 
