@@ -6,7 +6,7 @@ import tweepy
 from decouple import config
 from pymongo import MongoClient, errors
 
-from newsworthyness_tweets import newsworthiness_tweet
+from newsworthiness_tweets import newsworthiness_tweet
 from process_tweets import tweet_processor_rest, tweet_processor_streamer
 from downloader_tweets import downloader
 
@@ -20,7 +20,7 @@ ACCESS_TOKEN_SECRET = config("ACCESS_TOKEN_SECRET")
 DOWNLOAD = False
 
 # Runtime current time + <RUNTIME VALUE>
-RUNTIME = time.time() + 30  # 60 * 15
+RUNTIME = time.time() + 60 * 60
 # 60  # 60 * 18
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -29,6 +29,8 @@ api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 if (not api):
     print('Can\'t authenticate')
     print('failed cosumeer id ----------: ', CONSUMER_KEY)
+
+print(api)
 
 # this is to setup local Mongodb
 client = MongoClient('127.0.0.1', 27017)  # is assigned local port
@@ -161,35 +163,34 @@ class StreamListener(tweepy.StreamListener):
 
 if __name__ == '__main__':
 
-    Loc_UK = [-10.392627, 49.681847, 1.055039, 61.122019]  # UK and Ireland
-    Words_UK = ["Boris", "Prime Minister", "Tories", "UK", "London", "England", "Manchester", "Sheffield", "York", "Southampton",
-                "Wales", "Cardiff", "Swansea", "Banff", "Bristol", "Oxford", "Birmingham", "Scotland", "Glasgow", "Edinburgh", "Dundee", "Aberdeen", "Highlands",
-                "Inverness", "Perth", "St Andrews", "Dumfries", "Ayr",
-                "Ireland", "Dublin", "Cork", "Limerick", "Galway", "Belfast", " Derry", "Armagh",
-                "BoJo", "Labour", "Liberal Democrats", "SNP", "Conservatives", "First Minister", "Nicola Sturgeon", "Surgeon", "Chancelor",
-                "Boris Johnson", "Keir Stramer"]
+    Words_Group_Streamer = ["sturgeon", "nicola", "Salmond", "code", "ministerial",
+                            "london", "protest", "anti", "lockdown", "vaccine", "covid", "dose"]
 
-    print(f"Tracking: {str(Words_UK)}")
+    Words_Group_Rest = [
+        "sturgeon OR nicola OR Salmond OR code OR ministerial OR london OR protest OR anti OR lockdown OR vaccine OR covid OR dose"]
+
+    print(f"Tracking: {str(Words_Group_Streamer)}")
+
+    print("Hybrid crawler has started crawling")
 
     # Set up the listener. The 'wait_on_rate_limit=True' is needed to help with Twitter API rate limiting.
     listener = StreamListener(api=tweepy.API(wait_on_rate_limit_notify=True,
                                              wait_on_rate_limit=True))
     streamer = tweepy.Stream(auth=auth, listener=listener)
-    streamer.filter(locations=Loc_UK, track=Words_UK,
+    streamer.filter(track=Words_Group_Streamer,
                     languages=['en'], is_async=True)
 
+    Lat = '54.370084'
+    Long = '-2.938314'
+    geoterm = Lat+','+Long+','+'990km'
+
     last_id = None
-    counter = 0
-    sinceID = None
-
-    results = True
-
-    query = ("edinburgh OR glasgow OR UK OR uk OR Boris OR Johnson OR EU")
 
     while time.time() < RUNTIME:
         try:
-            tweets = api.search(q=query, count=100, lang="en", include_entities=True,
+            tweets = api.search(q=Words_Group_Rest, geocode=geoterm, count=100, lang="en", include_entities=True,
                                 tweet_mode='extended', max_id=last_id)  # , since_id = sinceID)
+
             for tweet in tweets:
                 asyncio.run(rest_process_tweets(tweet))
         except Exception as e:
@@ -197,7 +198,7 @@ if __name__ == '__main__':
 
     # Disconnect from streamer
     streamer.disconnect()
-    print("You have been disconnected from twitter streamer API")
+    print("Hybrid crawler has finished crawling")
 
     streamer_ids = collection_streamer.distinct('_id')
     rest_ids = collection_rest.distinct('_id')

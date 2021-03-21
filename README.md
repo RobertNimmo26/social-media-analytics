@@ -59,13 +59,13 @@ The project has a 5 minute sample data which has been crawled using the streamer
    ```
    python streamer_elbow_method.py
    ```
-   - The optimal number of clusters when ran was <ENTER_VALUE>
+   - The optimal number of clusters when ran was 14
 3. To run the clustering program, set the constants to the JSON input file and optimal number of clusters. This is already preset.
    ```
    JSON_INPUT = "streamer_5min.json"
-   NUMBER_OF_CLUSTERS = <ENTER_VALUE>
+   NUMBER_OF_CLUSTERS = 14
    ```
-4. After running the code, a JSON file with stats about the clusters formed called `streamer_5mins groups.json` will be created in the `kmeans` folder. You can then view a overview of the kmeans clusters and the top terms in each cluster.
+4. After running the code, a JSON file with stats about the clusters formed called `streamer_5min groups.json` will be created in the `kmeans` folder. You can then view a overview of the kmeans clusters and the top terms in each cluster.
 
 ### How to run
 

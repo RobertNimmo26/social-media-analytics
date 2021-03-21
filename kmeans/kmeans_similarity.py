@@ -7,8 +7,8 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-JSON_INPUT = "streamer.json"
-NUMBER_OF_CLUSTERS = 6
+JSON_INPUT = "streamer_5min.json"
+NUMBER_OF_CLUSTERS = 14
 
 
 def tokenised_data(doc):

@@ -3,9 +3,9 @@ import time
 
 import tweepy
 from decouple import config
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 
-from newsworthyness_tweets import newsworthiness_tweet
+from newsworthiness_tweets import newsworthiness_tweet
 from process_tweets import tweet_processor_streamer
 from downloader_tweets import downloader
 
@@ -19,7 +19,7 @@ ACCESS_TOKEN_SECRET = config("ACCESS_TOKEN_SECRET")
 DOWNLOAD = False
 
 # Runtime in seconds
-RUNTIME = 60 * 1
+RUNTIME = 60 * 60
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
@@ -50,10 +50,7 @@ stats = {
 
 
 class StreamListener(tweepy.StreamListener):
-  # This is a class provided by tweepy to access the Twitter Streaming API.
-
-    global geoEnabled
-    global geoDisabled
+    """This is a class provided by tweepy to access the Twitter Streaming API."""
 
     def on_connect(self):
         # Called initially to connect to the Streaming API
@@ -70,6 +67,12 @@ class StreamListener(tweepy.StreamListener):
         # Checks if tweet has a newsworthiness score of > 70%
         if newsworthiness_tweet(t, "streamer"):
             tweet = tweet_processor_streamer(t)
+
+            try:
+                collection.insert_one(tweet)
+            except errors.DuplicateKeyError:
+                return
+
             stats["total"] += 1
             stats["streamer_total"] += 1
 
@@ -83,15 +86,11 @@ class StreamListener(tweepy.StreamListener):
                 stats["no_videos"] += tweet["no_videos"]
             if tweet["verified"]:
                 stats["no_verified"] += 1
-            # if tweet["geoenabled"]:
-
             if tweet["coordinates"] is not None:
                 stats["no_coordinates"] += 1
             if tweet["place"] != False:
                 stats["no_geotagged"] += 1
                 stats["no_location_place"] += 1
-
-            collection.insert_one(tweet)
 
             if DOWNLOAD:
                 if tweet["media_urls"]:
@@ -101,12 +100,14 @@ class StreamListener(tweepy.StreamListener):
 if __name__ == '__main__':
 
     Loc_UK = [-10.392627, 49.681847, 1.055039, 61.122019]  # UK and Ireland
+
     Words_UK = ["Boris", "Prime Minister", "Tories", "UK", "London", "England", "Manchester", "Sheffield", "York", "Southampton",
                 "Wales", "Cardiff", "Swansea", "Banff", "Bristol", "Oxford", "Birmingham", "Scotland", "Glasgow", "Edinburgh", "Dundee", "Aberdeen", "Highlands",
                 "Inverness", "Perth", "St Andrews", "Dumfries", "Ayr",
-                "Ireland", "Dublin", "Cork", "Limerick", "Galway", "Belfast", " Derry", "Armagh",
+                "Ireland", "Northen Ireland", "Dublin", "Cork", "Limerick", "Galway", "Belfast", " Derry", "Armagh",
                 "BoJo", "Labour", "Liberal Democrats", "SNP", "Conservatives", "First Minister", "Nicola Sturgeon", "Surgeon", "Chancelor",
-                "Boris Johnson", "Keir Stramer"]
+                "Boris Johnson", "Keir Stramer", "Johnson", "PM",
+                "Sarah", "Everard", "BBC", "Guardian", "Times", "Telegraph", "United Kingdom", "GB", "Great Britan"]  # Words associated with UK 2021
 
     print(f"Tracking: {str(Words_UK)}")
 

@@ -130,8 +130,8 @@ def tweet_processor_streamer(tweet):
                 images_counter += 1
             elif element["type"] == "video":
                 videos_counter += 1
-            else:
-                media_urls.append(element["media_url"])
+
+            media_urls.append(element["media_url"])
 
     except:
         pass
@@ -246,8 +246,8 @@ def tweet_processor_rest(tweet):
                 images_counter += 1
             elif element.type == "video":
                 videos_counter += 1
-            else:
-                media_urls.append(element.media_url)
+
+            media_urls.append(element.media_url)
 
     except:
         pass

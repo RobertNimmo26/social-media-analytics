@@ -4,7 +4,7 @@ from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
 from yellowbrick.cluster import KElbowVisualizer, SilhouetteVisualizer
 
-JSON_INPUT = "streamer.json"
+JSON_INPUT = "streamer_5min.json"
 
 
 def tokenised_data(doc):
