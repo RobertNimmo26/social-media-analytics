@@ -21,14 +21,13 @@ DOWNLOAD = False
 
 # Runtime current time + <RUNTIME VALUE>
 RUNTIME = time.time() + 60 * 60
-# 60  # 60 * 18
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 if (not api):
     print('Can\'t authenticate')
-    print('failed cosumeer id ----------: ', CONSUMER_KEY)
+    print('failed consumer id ----------: ', CONSUMER_KEY)
 
 print(api)
 
@@ -189,7 +188,7 @@ if __name__ == '__main__':
     while time.time() < RUNTIME:
         try:
             tweets = api.search(q=Words_Group_Rest, geocode=geoterm, count=100, lang="en", include_entities=True,
-                                tweet_mode='extended', max_id=last_id)  # , since_id = sinceID)
+                                tweet_mode='extended', max_id=last_id)
 
             for tweet in tweets:
                 asyncio.run(rest_process_tweets(tweet))
